@@ -1,0 +1,7 @@
+sources:
+  - name: staging
+    database: FEA25_05
+    schema: RAW_ADVENTURE_WORKS
+
+    tables:
+      - name : 
