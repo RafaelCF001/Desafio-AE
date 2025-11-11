@@ -1,0 +1,91 @@
+version: 2
+
+sources:
+  - name: raw_adventure_works
+    description: "Tabelas brutas (raw) do Adventure Works para validação de qualidade de dados"
+    database: FEA25_05
+    schema: RAW_ADVENTURE_WORKS
+
+    tables:
+      - name: person_address
+        description: "Endereços de pessoas"
+        columns:
+          - name: addressid
+            tests:
+              - not_null
+              - unique
+
+      - name: person_countryregion
+        description: "Países/regiões"
+        columns:
+          - name: countryregioncode
+            tests:
+              - not_null
+              - unique
+
+      - name: person_person
+        description: "Pessoas (clientes, vendedores, etc)"
+        columns:
+          - name: businessentityid
+            tests:
+              - not_null
+              - unique
+
+      - name: person_stateprovince
+        description: "Estados/províncias"
+        columns:
+          - name: stateprovinceid
+            tests:
+              - not_null
+              - unique
+
+      - name: production_product
+        description: "Produtos"
+        columns:
+          - name: productid
+            tests:
+              - not_null
+              - unique
+
+      - name: sales_creditcard
+        description: "Cartões de crédito usados em vendas"
+        columns:
+          - name: creditcardid
+            tests:
+              - not_null
+              - unique
+
+      - name: sales_customer
+        description: "Clientes"
+        columns:
+          - name: customerid
+            tests:
+              - not_null
+              - unique
+
+      - name: sales_salesorderdetail
+        description: "Linhas de detalhe de pedidos de venda"
+        columns:
+          - name: salesorderdetailid
+            tests:
+              - not_null
+              - unique
+
+      - name: sales_salesorderheader
+        description: "Cabeçalhos de pedidos de venda"
+        columns:
+          - name: salesorderid
+            tests:
+              - not_null
+              - unique
+
+      - name: sales_salesorderheadersalesreason
+        description: "Relação N:N entre pedidos e motivos de venda"
+
+      - name: sales_salesreason
+        description: "Motivos de venda (lookup)"
+        columns:
+          - name: salesreasonid
+            tests:
+              - not_null
+              - unique

@@ -1,0 +1,126 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Dimensão Cliente - fornece contexto descritivo de cada cliente (pessoa ou loja)"
+    columns:
+      - name: customer_id
+        description: "ID único do cliente (PK)"
+        data_tests:
+          - not_null
+          - unique
+      - name: person_id
+        description: "FK para stg_pe_person; NULL se o cliente for uma loja"
+      - name: store_id
+        description: "FK para a tabela de loja; NULL se o cliente for uma pessoa"
+      - name: customer_name
+        description: "Nome completo do cliente (FirstName + MiddleName + LastName), resolvido via int_customer_names"
+
+  - name: dim_product
+    description: "Dimensão Produto - descreve cada produto vendido com sua classificação"
+    columns:
+      - name: product_id
+        description: "ID único do produto (PK)"
+        data_tests:
+          - not_null
+          - unique
+      - name: product_name
+        description: "Nome descritivo do produto"
+      - name: product_subcategory_id
+        description: "FK para a subcategoria do produto"
+      - name: product_subcategory_name
+        description: "Nome da subcategoria de produto (ex: Mountain Bikes, Road Frames)"
+
+  - name: dim_location
+    description: "Dimensão Localização - fornece contexto geográfico de endereços de envio"
+    columns:
+      - name: ship_to_address_id
+        description: "ID único do endereço de envio (PK, FK para stg_pe_address)"
+        data_tests:
+          - not_null
+          - unique
+      - name: city
+        description: "Cidade do endereço de envio"
+      - name: state
+        description: "Estado ou Província do endereço de envio"
+      - name: country
+        description: "País ou Região do endereço de envio"
+
+  - name: dim_credit_card
+    description: "Dimensão Cartão de Crédito - tipos de cartão utilizados nas vendas"
+    columns:
+      - name: credit_card_id
+        description: "ID único do cartão de crédito (PK)"
+        data_tests:
+          - not_null
+          - unique
+      - name: card_type
+        description: "Tipo do cartão (ex: Visa, MasterCard, American Express)"
+
+  - name: dim_date
+    description: "Dimensão de Data - atributos de tempo para análise temporal de vendas"
+    columns:
+      - name: date_key
+        description: "Data em formato DATE (PK)"
+        data_tests:
+          - not_null
+          - unique
+      - name: order_year
+        description: "Ano do pedido"
+      - name: order_month_number
+        description: "Número do mês (1-12)"
+      - name: order_day_of_week
+        description: "Dia da semana (0=domingo, 6=sábado, conforme Snowflake DATE_PART)"
+      - name: order_quarter
+        description: "Trimestre do ano (1-4)"
+
+  - name: fct_sales_orders
+    description: "Tabela de Fato Central - registra todas as linhas de pedido de venda com métricas de negócio e referências a todas as dimensões"
+    columns:
+      - name: sales_order_detail_id
+        description: "ID único da linha de pedido (PK)"
+        data_tests:
+          - not_null
+          - unique
+      - name: sales_order_id
+        description: "FK para o pedido de venda (relaciona múltiplas linhas ao mesmo pedido)"
+      - name: product_id
+        description: "FK para dim_product"
+      - name: customer_id
+        description: "FK para dim_customer"
+      - name: credit_card_id
+        description: "FK para dim_credit_card"
+      - name: ship_to_address_id
+        description: "FK para dim_location"
+      - name: order_date
+        description: "Data do pedido em formato DATE"
+      - name: order_year
+        description: "Ano extraído da data do pedido"
+      - name: order_month
+        description: "Mês extraído da data do pedido"
+      - name: customer_name
+        description: "Nome do cliente (denormalizado de dim_customer)"
+      - name: product_name
+        description: "Nome do produto (denormalizado de dim_product)"
+      - name: city
+        description: "Cidade de envio (denormalizado de dim_location)"
+      - name: state
+        description: "Estado/Província de envio (denormalizado de dim_location)"
+      - name: country
+        description: "País/Região de envio (denormalizado de dim_location)"
+      - name: card_type
+        description: "Tipo de cartão de crédito (denormalizado de dim_credit_card)"
+      - name: status_pedido
+        description: "Status do pedido (ex: 1=Pending, 2=Approved, 3=BackorderPending, 4=Rejected, 5=Shipped, 6=Cancelled)"
+      - name: motivo_venda
+        description: "Motivos de venda agregados, separados por vírgula (ex: 'Marketing, Price Promotion')"
+      - name: quantidade_comprada
+        description: "Quantidade de unidades compradas na linha"
+        data_tests:
+          - not_null
+      - name: faturamento_bruto_produto
+        description: "Faturamento bruto = quantidade * preço unitário (sem desconto)"
+      - name: desconto_produto
+        description: "Valor de desconto aplicado na linha = desconto% * quantidade * preço unitário"
+      - name: valor_total_negociado_linha
+        description: "Valor total negociado = (preço unitário * (1 - desconto%)) * quantidade"
