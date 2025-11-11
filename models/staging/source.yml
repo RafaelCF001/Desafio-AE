@@ -1,7 +1,132 @@
 sources:
-  - name: staging
+  - name: raw_adventure_works
     database: FEA25_05
     schema: RAW_ADVENTURE_WORKS
+    description: "Raw Adventure Works source tables used by staging models"
 
     tables:
-      - name : 
+      - name: person_address
+        description: "Addresses for people"
+        columns:
+          - name: addressid
+            description: "Primary key for the address"
+          - name: city
+            description: "City name"
+          - name: stateprovinceid
+            description: "FK to state/province (person_stateprovince)"
+
+      - name: person_countryregion
+        description: "Country / region lookup"
+        columns:
+          - name: countryregioncode
+            description: "Country/region code (PK)"
+          - name: name
+            description: "Country/region name"
+
+      - name: person_person
+        description: "Person master table with names"
+        columns:
+          - name: businessentityid
+            description: "Primary key for person (business entity id)"
+          - name: firstname
+            description: "Person's first name"
+          - name: middlename
+            description: "Person's middle name (nullable)"
+          - name: lastname
+            description: "Person's last name"
+
+      - name: person_stateprovince
+        description: "State / province lookup table"
+        columns:
+          - name: stateprovinceid
+            description: "Primary key for state/province"
+          - name: name
+            description: "State/province name"
+          - name: countryregioncode
+            description: "Country/region code (FK to person_countryregion)"
+
+      - name: production_product
+        description: "Product master table"
+        columns:
+          - name: productid
+            description: "Primary key for product"
+          - name: name
+            description: "Product name"
+          - name: productsubcategoryid
+            description: "FK to product subcategory (nullable)"
+
+      - name: sales_creditcard
+        description: "Credit card details used for sales orders"
+        columns:
+          - name: creditcardid
+            description: "Primary key for credit card"
+          - name: cardtype
+            description: "Type of card (e.g. Visa, MasterCard)"
+
+      - name: sales_customer
+        description: "Customer rows for sales (person or store)"
+        columns:
+          - name: customerid
+            description: "Primary key for customer"
+          - name: personid
+            description: "FK to person (nullable when store customer)"
+          - name: storeid
+            description: "FK to store (nullable when person customer)"
+
+      - name: sales_salesorderdetail
+        description: "Sales order line items"
+        columns:
+          - name: salesorderid
+            description: "FK to sales order header"
+          - name: salesorderdetailid
+            description: "Primary key for order detail line"
+          - name: productid
+            description: "FK to product"
+          - name: orderqty
+            description: "Quantity ordered"
+          - name: unitprice
+            description: "Unit price for the line item"
+          - name: unitpricediscount
+            description: "Discount on unit price (decimal)"
+          - name: modifieddate
+            description: "Row last modified timestamp"
+
+      - name: sales_salesorderheader
+        description: "Sales order header / summary"
+        columns:
+          - name: salesorderid
+            description: "Primary key for sales order"
+          - name: customerid
+            description: "FK to sales_customer"
+          - name: creditcardid
+            description: "FK to sales_creditcard (nullable)"
+          - name: shiptoaddressid
+            description: "FK to person_address for shipping"
+          - name: orderdate
+            description: "Order date/time"
+          - name: status
+            description: "Order status code"
+          - name: subtotal
+            description: "Order subtotal amount"
+          - name: freight
+            description: "Shipping freight amount"
+          - name: modifieddate
+            description: "Row last modified timestamp"
+
+      - name: sales_salesorderheadersalesreason
+        description: "Mapping table: sales order header -> sales reason"
+        columns:
+          - name: salesorderid
+            description: "FK to sales_salesorderheader"
+          - name: salesreasonid
+            description: "FK to sales_salesreason"
+
+      - name: sales_salesreason
+        description: "Lookup table for sales reasons"
+        columns:
+          - name: salesreasonid
+            description: "Primary key for sales reason"
+          - name: name
+            description: "Sales reason name"
+          - name: reasontype
+            description: "Type/category of the sales reason"
