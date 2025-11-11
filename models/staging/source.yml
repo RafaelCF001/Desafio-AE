@@ -130,3 +130,16 @@ sources:
             description: "Sales reason name"
           - name: reasontype
             description: "Type/category of the sales reason"
+
+      - name: production_productsubcategory
+        description: "Product subcategory"
+        columns:
+          - name: productsubcategoryid
+            description: "id"
+          - name: productcategoryid
+            description: "category id"
+          - name: name
+            description: "Product subcategory name"
+          - name: modifieddate
+            description: "modified date"
+          
