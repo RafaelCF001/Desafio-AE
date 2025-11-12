@@ -1,60 +1,53 @@
-{{ config(
-    materialized='table',
-    snowflake_warehouse='COMPUTE_WH',
-    unique_key=['sales_order_detail_id']
-) }}
+{{
+    config(
+        materialized="table",
+        unique_key=["sales_order_detail_id"],
+    )
+}}
 
-SELECT
-    SOD.sales_order_id,
-    SOD.sales_order_detail_id,
+select
+    sod.sales_order_id,
+    sod.sales_order_detail_id,
 
-    SOD.product_id,
-    SOH.customer_id,
-    SOH.credit_card_id,
-    SOH.ship_to_address_id,
-    
-    CAST(SOH.order_date AS DATE) AS order_date,
-    DATE_PART(YEAR, SOH.order_date) AS order_year,
-    DATE_PART(MONTH, SOH.order_date) AS order_month,
+    sod.product_id,
+    soh.customer_id,
+    soh.credit_card_id,
+    soh.ship_to_address_id,
 
-    DIM_C.customer_name,
+    cast(soh.order_date as date) as order_date,
+    date_part(year, soh.order_date) as order_year,
+    date_part(month, soh.order_date) as order_month,
 
-    DIM_P.product_name,
+    dim_c.customer_name,
 
-    DIM_L.city,
-    DIM_L.state,
-    DIM_L.country,
+    dim_p.product_name,
 
-    DIM_CC.card_type,
-    SOH.status_code AS status_pedido,
+    dim_l.city,
+    dim_l.state,
+    dim_l.country,
 
-    INT_SR.aggregated_sales_reasons AS motivo_venda,
+    dim_cc.card_type,
+    soh.status_code as status_pedido,
 
-    SOD.order_qty AS quantidade_comprada, 
-    
-    (SOD.order_qty * SOD.unit_price) AS faturamento_bruto_produto, 
-    
-    (SOD.unit_price_discount * SOD.order_qty * SOD.unit_price) AS desconto_produto, 
-    
-    SOD.caculated_line_total AS valor_total_negociado_linha 
-    
-FROM
-    {{ ref('stg_sa_salesorderdetail') }} SOD
-INNER JOIN
-    {{ ref('stg_sa_salesorderheader') }} SOH
-    ON SOD.sales_order_id = SOH.sales_order_id
-LEFT JOIN
-    {{ ref('dim_customer') }} DIM_C
-    ON SOH.customer_id = DIM_C.customer_id
-LEFT JOIN
-    {{ ref('dim_product') }} DIM_P
-    ON SOD.product_id = DIM_P.product_id
-LEFT JOIN
-    {{ ref('dim_location') }} DIM_L
-    ON SOH.ship_to_address_id = DIM_L.ship_to_address_id
-LEFT JOIN
-    {{ ref('dim_credit_card') }} DIM_CC
-    ON SOH.credit_card_id = DIM_CC.credit_card_id
-LEFT JOIN
-    {{ ref('int_sales_reason_agg') }} INT_SR
-    ON SOH.sales_order_id = INT_SR.sales_order_id
+    int_sr.aggregated_sales_reasons as motivo_venda,
+
+    sod.order_qty as quantidade_comprada,
+
+    (sod.order_qty * sod.unit_price) as faturamento_bruto_produto,
+
+    (sod.unit_price_discount * sod.order_qty * sod.unit_price) as desconto_produto,
+
+    sod.caculated_line_total as valor_total_negociado_linha
+
+from {{ ref("stg_sa_salesorderdetail") }} sod
+inner join
+    {{ ref("stg_sa_salesorderheader") }} soh on sod.sales_order_id = soh.sales_order_id
+left join {{ ref("dim_customer") }} dim_c on soh.customer_id = dim_c.customer_id
+left join {{ ref("dim_product") }} dim_p on sod.product_id = dim_p.product_id
+left join
+    {{ ref("dim_location") }} dim_l on soh.ship_to_address_id = dim_l.ship_to_address_id
+left join
+    {{ ref("dim_credit_card") }} dim_cc on soh.credit_card_id = dim_cc.credit_card_id
+left join
+    {{ ref("int_sales_reason_agg") }} int_sr
+    on soh.sales_order_id = int_sr.sales_order_id

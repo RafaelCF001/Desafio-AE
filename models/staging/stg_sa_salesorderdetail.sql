@@ -7,6 +7,6 @@ SELECT
     orderqty as order_qty,
     unitprice as unit_price,
     unitpricediscount as unit_price_discount,
-    (unitprice * (1.0 * unitpricediscount) * orderqty) as caculated_line_total,
+    (unitprice * (1.0 - unitpricediscount) * orderqty) as caculated_line_total,
     modifieddate as modified_date
 FROM {{source('raw_adventure_works', 'sales_salesorderdetail')}}

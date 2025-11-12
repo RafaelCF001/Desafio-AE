@@ -1,41 +1,47 @@
-
 -- dim_customer
-SELECT customer_id, COUNT(*) as cnt
-FROM {{ ref('dim_customer') }}
-GROUP BY customer_id
-HAVING cnt > 1;
+select customer_id, count(*) as cnt
+from {{ ref("dim_customer") }}
+group by customer_id
+having cnt > 1
+;
 
 -- dim_product
-SELECT product_id, COUNT(*) as cnt
-FROM {{ ref('dim_product') }}
-GROUP BY product_id
-HAVING cnt > 1;
+select product_id, count(*) as cnt
+from {{ ref("dim_product") }}
+group by product_id
+having cnt > 1
+;
 
 -- dim_location
-SELECT ship_to_address_id, COUNT(*) as cnt
-FROM {{ ref('dim_location') }}
-GROUP BY ship_to_address_id
-HAVING cnt > 1;
+select ship_to_address_id, count(*) as cnt
+from {{ ref("dim_location") }}
+group by ship_to_address_id
+having cnt > 1
+;
 
 -- dim_credit_card
-SELECT credit_card_id, COUNT(*) as cnt
-FROM {{ ref('dim_credit_card') }}
-GROUP BY credit_card_id
-HAVING cnt > 1;
+select credit_card_id, count(*) as cnt
+from {{ ref("dim_credit_card") }}
+group by credit_card_id
+having cnt > 1
+;
 
 -- dim_date
-SELECT date_key, COUNT(*) as cnt
-FROM {{ ref('dim_date') }}
-GROUP BY date_key
-HAVING cnt > 1;
+select date_key, count(*) as cnt
+from {{ ref("dim_date") }}
+group by date_key
+having cnt > 1
+;
 
 -- fct_sales_orders (unique_key = sales_order_detail_id)
-SELECT sales_order_detail_id, COUNT(*) as cnt
-FROM {{ ref('fct_sales_orders') }}
-GROUP BY sales_order_detail_id
-HAVING cnt > 1;
+select sales_order_detail_id, count(*) as cnt
+from {{ ref("fct_sales_orders") }}
+group by sales_order_detail_id
+having cnt > 1
+;
 
 -- Verificar NULLs em PKs
-SELECT COUNT(*) as null_pks
-FROM {{ ref('fct_sales_orders') }}
-WHERE sales_order_detail_id IS NULL;
+select count(*) as null_pks
+from {{ ref("fct_sales_orders") }}
+where sales_order_detail_id is null
+;
