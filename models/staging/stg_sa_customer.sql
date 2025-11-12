@@ -1,7 +1,7 @@
 {{config(materialized='view')}}
 
 SELECT
-    customerid as customer_id,
-    personid as person_id,
-    storeid as store_id
-FROM {{source('raw_adventure_works', 'sales_customer')}} 
+    customerid AS customer_id,
+    COALESCE(personid, 0) AS person_id,
+    COALESCE(storeid, 0) AS store_id
+FROM {{source('raw_adventure_works', 'sales_customer')}}

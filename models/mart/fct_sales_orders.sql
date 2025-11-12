@@ -18,6 +18,7 @@ SELECT
     DATE_PART(MONTH, SOH.order_date) AS order_month,
 
     DIM_C.customer_name,
+    DIM_C.customer_type,
 
     DIM_P.product_name,
 
