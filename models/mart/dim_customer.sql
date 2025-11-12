@@ -4,6 +4,7 @@ SELECT
     t1.customer_id,
     t1.person_id,
     t1.store_id,
+    t1.customer_type,
     t2.full_customer_name AS customer_name
 FROM
     {{ ref('stg_sa_customer') }} t1

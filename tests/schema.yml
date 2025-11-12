@@ -1,0 +1,67 @@
+version: 2
+
+tests:
+  # Data Quality Tests - Fact Table Metrics
+  - name: fct_quantidade_comprada_non_negative
+    description: "Validates that order quantities are not negative in fct_sales_orders"
+    attached_node: model:fct_sales_orders
+
+  - name: fct_faturamento_bruto_non_negative
+    description: "Validates that gross billing (faturamento_bruto_produto) is not negative"
+    attached_node: model:fct_sales_orders
+
+  - name: fct_desconto_non_negative
+    description: "Validates that discount amounts (desconto_produto) are not negative"
+    attached_node: model:fct_sales_orders
+
+  - name: fct_valor_total_negociado_non_negative
+    description: "Validates that negotiated values (valor_total_negociado_linha) are not negative"
+    attached_node: model:fct_sales_orders
+
+  # Referential Integrity Tests - Foreign Keys
+  - name: fct_product_id_fk_exists
+    description: "Validates that all product_id values in fct_sales_orders exist in dim_product"
+    attached_node: model:fct_sales_orders
+
+  - name: fct_customer_id_fk_exists
+    description: "Validates that all customer_id values in fct_sales_orders exist in dim_customer"
+    attached_node: model:fct_sales_orders
+
+  - name: fct_ship_to_address_id_fk_exists
+    description: "Validates that all non-null ship_to_address_id values in fct_sales_orders exist in dim_location"
+    attached_node: model:fct_sales_orders
+
+  # Temporal Validation
+  - name: fct_order_date_valid_range
+    description: "Validates that order dates are not in the future and are after year 2000"
+    attached_node: model:fct_sales_orders
+
+  # Primary Key Uniqueness Tests - Dimensions
+  - name: dim_customer_id_pk_unique
+    description: "Validates that customer_id is unique in dim_customer"
+    attached_node: model:dim_customer
+
+  - name: dim_product_id_pk_unique
+    description: "Validates that product_id is unique in dim_product"
+    attached_node: model:dim_product
+
+  - name: dim_location_address_id_pk_unique
+    description: "Validates that ship_to_address_id is unique in dim_location"
+    attached_node: model:dim_location
+
+  - name: dim_credit_card_id_pk_unique
+    description: "Validates that credit_card_id is unique in dim_credit_card"
+    attached_node: model:dim_credit_card
+
+  - name: dim_date_key_pk_unique
+    description: "Validates that date_key is unique in dim_date"
+    attached_node: model:dim_date
+
+  # Primary Key Uniqueness Tests - Fact
+  - name: fct_sales_order_detail_id_pk_unique
+    description: "Validates that sales_order_detail_id is unique in fct_sales_orders (unique key)"
+    attached_node: model:fct_sales_orders
+
+  - name: fct_sales_order_detail_id_not_null
+    description: "Validates that sales_order_detail_id is never NULL in fct_sales_orders (primary key constraint)"
+    attached_node: model:fct_sales_orders

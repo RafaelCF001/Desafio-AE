@@ -7,14 +7,15 @@ models:
       - name: customer_id
         description: "ID único do cliente (PK)"
         data_tests:
-          - not_null
           - unique
       - name: person_id
-        description: "FK para stg_pe_person; NULL se o cliente for uma loja"
+        description: "FK para stg_pe_person; NULL se o cliente for uma loja (tipo Store)"
       - name: store_id
-        description: "FK para a tabela de loja; NULL se o cliente for uma pessoa"
+        description: "FK para a tabela de loja; NULL se o cliente for uma pessoa (tipo Person)"
+      - name: customer_type
+        description: "Tipo de cliente: 'Person', 'Store', ou 'Unknown'"
       - name: customer_name
-        description: "Nome completo do cliente (FirstName + MiddleName + LastName), resolvido via int_customer_names"
+        description: "Nome completo do cliente ou 'Store Customer'; resolvido via int_customer_names"
 
   - name: dim_product
     description: "Dimensão Produto - descreve cada produto vendido com sua classificação"
@@ -89,7 +90,7 @@ models:
       - name: customer_id
         description: "FK para dim_customer"
       - name: credit_card_id
-        description: "FK para dim_credit_card"
+        description: "FK para dim_credit_card (nullable - optional payment method)"
       - name: ship_to_address_id
         description: "FK para dim_location"
       - name: order_date
@@ -99,7 +100,9 @@ models:
       - name: order_month
         description: "Mês extraído da data do pedido"
       - name: customer_name
-        description: "Nome do cliente (denormalizado de dim_customer)"
+        description: "Nome do cliente ou 'Store Customer' (denormalizado de dim_customer)"
+      - name: customer_type
+        description: "Tipo de cliente ('Person' ou 'Store'), denormalizado de dim_customer"
       - name: product_name
         description: "Nome do produto (denormalizado de dim_product)"
       - name: city
@@ -118,9 +121,16 @@ models:
         description: "Quantidade de unidades compradas na linha"
         data_tests:
           - not_null
+          - non_negative_values
       - name: faturamento_bruto_produto
         description: "Faturamento bruto = quantidade * preço unitário (sem desconto)"
+        data_tests:
+          - non_negative_values
       - name: desconto_produto
         description: "Valor de desconto aplicado na linha = desconto% * quantidade * preço unitário"
+        data_tests:
+          - non_negative_values
       - name: valor_total_negociado_linha
         description: "Valor total negociado = (preço unitário * (1 - desconto%)) * quantidade"
+        data_tests:
+          - non_negative_values

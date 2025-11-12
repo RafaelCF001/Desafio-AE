@@ -17,6 +17,8 @@ select
     cast(soh.order_date as date) as order_date,
     date_part(year, soh.order_date) as order_year,
     date_part(month, soh.order_date) as order_month,
+    DIM_C.customer_name,
+    DIM_C.customer_type,
 
     dim_c.customer_name,
 
